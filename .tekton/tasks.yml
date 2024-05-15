@@ -57,3 +57,13 @@ spec:
         python -m pip install --upgrade pip wheel
         pip install -r requirements.txt
         nosetests $(params.args)
+
+    - name: deploy
+      taskRef:
+        name: openshift-client
+      params:
+        - name: command
+          value: "create deployment $(openshift-web-console) --image=$(tasks.git-clone.results.commit) --dry-run=client -o yaml | oc apply -f -"
+      workspaces:
+        - name: output
+
